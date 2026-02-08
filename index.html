@@ -1,50 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sticky Navbar | Portfolio</title>
-    <link rel="stylesheet" href="css/styles.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Precision Grid Header</title>
+	<link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-    <!-- NAVBAR -->
-    <header class="header">
-        <nav class="navbar">
-            <a href="#" class="logo">
-                <img src="images/logo.svg" alt="Logo">
-            </a>
-            <ul class="nav-list" id="nav-list">
-                <li><a href="#">Home</a></li>
-                <li class="dropdown">
-                    <a href="#">About</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Team</a></li>
-                        <li><a href="#">Mission</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Services</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Design</a></li>
-                        <li><a href="#">Development</a></li>
-                    </ul>
-                </li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-            <button class="hamburger" id="hamburger" aria-label="Toggle Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </nav>
-    </header>
+	<a href="#main-content" class="skip-link">Skip to main content</a>
+	<header class="header">
+		<nav class="navbar">
+			<a href="#" class="logo">Sticky Navbar</a>
+			<div class="nav-container">
+				<div class="nav-menu" id="nav-menu">
+					<ul class="nav-list">
+						<li class="nav-item no-submenu"><a href="#" class="nav-link">Home</a></li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">About</a>
+							<button class="action-area arrow-toggle" aria-label="Toggle Submenu" aria-expanded="false"
+								aria-haspopup="true" aria-controls="submenu-about">
+								<span class="chevron"></span>
+							</button>
+							<ul class="dropdown-menu" id="submenu-about">
+								<li><a href="#">History</a></li>
+								<li><a href="#">Vision</a></li>
+								<li><a href="#">Values</a></li>
+							</ul>
+						</li>
+						<li class="nav-item">
+							<a href="#" class="nav-link">Services</a>
+							<button class="action-area arrow-toggle" aria-label="Toggle Submenu" aria-expanded="false"
+								aria-haspopup="true" aria-controls="submenu-services">
+								<span class="chevron"></span>
+							</button>
+							<ul class="dropdown-menu" id="submenu-services">
+								<li><a href="#">Consulting</a></li>
+								<li><a href="#">Design</a></li>
+								<li><a href="#">Development</a></li>
+								<li><a href="#">Strategy</a></li>
+							</ul>
+						</li>
+						<li class="nav-item no-submenu"><a href="#" class="nav-link">News</a></li>
+						<li class="nav-item no-submenu"><a href="#" class="nav-link">FAQ</a></li>
+						<li class="nav-item no-submenu"><a href="#" class="nav-link">Contact</a></li>
+						<li class="search-wrapper" id="search-wrapper">
+							<label for="search-input" class="sr-only">Search</label>
+							<input type="text" class="search-input" id="search-input" placeholder="Search..."
+								aria-label="Search">
+							<button class="action-area" id="search-toggle" aria-label="Toggle Search"
+								aria-expanded="false" aria-controls="search-input">
+								<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+									<path fill="currentColor"
+										d="M16.6,18l-6.3-6.3c-.5.4-1.08.72-1.73.95s-1.34.35-2.08.35c-1.82,0-3.35-.63-4.61-1.89S0,8.32,0,6.5.63,3.15,1.89,1.89,4.68,0,6.5,0s3.35.63,4.61,1.89,1.89,2.8,1.89,4.61c0,.73-.12,1.43-.35,2.08s-.55,1.23-.95,1.73l6.3,6.3-1.4,1.4ZM6.5,11c1.25,0,2.31-.44,3.19-1.31s1.31-1.94,1.31-3.19-.44-2.31-1.31-3.19-1.94-1.31-3.19-1.31-2.31.44-3.19,1.31-1.31,1.94-1.31,3.19.44,2.31,1.31,3.19,1.94,1.31,3.19,1.31Z" />
+								</svg>
+							</button>
+						</li>
+					</ul>
+				</div>
+				<button class="hamburger" id="hamburger" aria-label="Open Menu" aria-expanded="false"
+					aria-controls="nav-menu"><span class="bar"></span><span class="bar"></span><span
+						class="bar"></span></button>
+			</div>
+		</nav>
+	</header>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <h1>Sticky Navbar Example</h1>
-        <p>This is a simple demo page showing a sticky, responsive navbar with dropdowns and hamburger menu.</p>
-    </main>
+	<main id="main-content" tabindex="-1"></main>
 
-    <script src="js/script.js"></script>
+	<script src="js/script.js"></script>
 </body>
+
 </html>
