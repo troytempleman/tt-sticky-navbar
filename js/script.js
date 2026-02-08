@@ -4,28 +4,23 @@
  * Description: Behavior for menu, submenu, search, and accessibility.
  */
 
-// Hamburger toggle
+// DOM references
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
 const searchToggle = document.getElementById('search-toggle');
 const searchInput = document.getElementById('search-input');
 const toggles = document.querySelectorAll('.arrow-toggle');
+const focusableSelector = 'a, button, input, select, textarea, [tabindex]';
 
-const setKeyboardMode = (isKeyboard) => {
-    document.body.classList.toggle('using-keyboard', isKeyboard);
-};
+// Shared helpers
+const isMobile = () => window.innerWidth <= 768;
+const setKeyboardMode = (isKeyboard) => document.body.classList.toggle('using-keyboard', isKeyboard);
+const setAriaExpanded = (el, expanded) => el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Tab') setKeyboardMode(true);
-});
-
-document.addEventListener('mousedown', () => setKeyboardMode(false));
-document.addEventListener('touchstart', () => setKeyboardMode(false));
-
+// Mobile menu focus management
 const setMobileMenuFocusability = (isOpen) => {
-    const isMobile = window.innerWidth <= 768;
-    const focusables = navMenu.querySelectorAll('a, button, input, select, textarea, [tabindex]');
-    if (!isMobile) {
+    const focusables = navMenu.querySelectorAll(focusableSelector);
+    if (!isMobile()) {
         navMenu.removeAttribute('aria-hidden');
         focusables.forEach(el => {
             if (el.dataset.origTabindex) {
@@ -45,7 +40,9 @@ const setMobileMenuFocusability = (isOpen) => {
                 el.dataset.origTabindex = el.getAttribute('tabindex');
             }
             el.setAttribute('tabindex', '-1');
-        } else if (el.dataset.origTabindex) {
+            return;
+        }
+        if (el.dataset.origTabindex) {
             el.setAttribute('tabindex', el.dataset.origTabindex);
             delete el.dataset.origTabindex;
         } else {
@@ -54,40 +51,45 @@ const setMobileMenuFocusability = (isOpen) => {
     });
 };
 
+// Get focusable items in the mobile menu
 const getMobileMenuFocusables = () => {
-    return Array.from(navMenu.querySelectorAll('a, button, input, select, textarea, [tabindex]'))
+    return Array.from(navMenu.querySelectorAll(focusableSelector))
         .filter(el => !el.hasAttribute('disabled') && el.getAttribute('tabindex') !== '-1');
 };
 
+// Focus the first available item when opening the mobile menu
 const focusFirstMobileItem = () => {
     const items = getMobileMenuFocusables();
     if (items.length) items[0].focus();
 };
 
-const keepFocusInMobileMenu = (e) => {
-    if (window.innerWidth > 768 || !navMenu.classList.contains('active')) return;
-    if (e.target === hamburger) return;
-    if (!navMenu.contains(e.target)) {
-        focusFirstMobileItem();
-    }
+// Toggle mobile menu state (visual + accessibility)
+const setMobileMenuState = (open) => {
+    navMenu.classList.toggle('active', open);
+    hamburger.classList.toggle('active', open);
+    setAriaExpanded(hamburger, open);
+    setMobileMenuFocusability(open);
+    if (open && isMobile()) requestAnimationFrame(focusFirstMobileItem);
 };
 
+// Submenu controls
 const closeAllSubmenus = () => {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('is-open'));
-    document.querySelectorAll('.arrow-toggle').forEach(t => t.setAttribute('aria-expanded', 'false'));
+    document.querySelectorAll('.arrow-toggle').forEach(t => setAriaExpanded(t, false));
 };
 
-// Toggle Submenus
+// Toggle a single submenu
 const toggleSubmenu = (btn) => {
     const parent = btn.parentElement;
     const isOpen = parent.classList.contains('is-open');
     closeAllSubmenus();
     if (!isOpen) {
         parent.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
+        setAriaExpanded(btn, true);
     }
 };
 
+// Submenu toggle events
 toggles.forEach(btn => {
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -101,69 +103,51 @@ toggles.forEach(btn => {
     });
 });
 
-// Desktop Search Animation
+// Search controls
 searchToggle.addEventListener('click', (e) => {
-    if (window.innerWidth > 768) {
-        e.stopPropagation();
-        searchInput.classList.toggle('active');
-        searchToggle.setAttribute('aria-expanded', searchInput.classList.contains('active') ? 'true' : 'false');
-        if (searchInput.classList.contains('active')) searchInput.focus();
-    }
+    if (isMobile()) return;
+    e.stopPropagation();
+    const active = searchInput.classList.toggle('active');
+    setAriaExpanded(searchToggle, active);
+    if (active) searchInput.focus();
 });
 
-// Mobile Menu Toggle
+// Mobile menu controls
 hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
-    hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active') ? 'true' : 'false');
-    setMobileMenuFocusability(navMenu.classList.contains('active'));
-    if (navMenu.classList.contains('active') && window.innerWidth <= 768) {
-        requestAnimationFrame(() => focusFirstMobileItem());
-    }
+    setMobileMenuState(!navMenu.classList.contains('active'));
 });
 
 hamburger.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        navMenu.classList.toggle('active');
-        hamburger.classList.toggle('active');
-        hamburger.setAttribute('aria-expanded', navMenu.classList.contains('active') ? 'true' : 'false');
-        setMobileMenuFocusability(navMenu.classList.contains('active'));
-        if (navMenu.classList.contains('active') && window.innerWidth <= 768) {
-            requestAnimationFrame(() => focusFirstMobileItem());
-        }
+        setMobileMenuState(!navMenu.classList.contains('active'));
     }
 });
 
-// Global Click-away
+// Global click/key handling
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nav-item')) {
-        closeAllSubmenus();
-    }
-    if (window.innerWidth > 768 && !document.getElementById('search-wrapper').contains(e.target)) {
+    if (!e.target.closest('.nav-item')) closeAllSubmenus();
+    if (!isMobile() && !document.getElementById('search-wrapper').contains(e.target)) {
         searchInput.classList.remove('active');
-        searchToggle.setAttribute('aria-expanded', 'false');
+        setAriaExpanded(searchToggle, false);
     }
 });
 
+// Keyboard handling (focus mode, escape, focus trap)
 document.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') setKeyboardMode(true);
+
     if (e.key === 'Escape') {
         closeAllSubmenus();
         if (navMenu.classList.contains('active')) {
-            navMenu.classList.remove('active');
-            hamburger.classList.remove('active');
-            hamburger.setAttribute('aria-expanded', 'false');
-            setMobileMenuFocusability(false);
+            setMobileMenuState(false);
             hamburger.focus();
         }
         searchInput.classList.remove('active');
-        searchToggle.setAttribute('aria-expanded', 'false');
+        setAriaExpanded(searchToggle, false);
     }
-});
 
-document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Tab') return;
-    if (window.innerWidth > 768 || !navMenu.classList.contains('active')) return;
+    if (e.key !== 'Tab' || !navMenu.classList.contains('active') || !isMobile()) return;
 
     const items = getMobileMenuFocusables();
     if (!items.length) return;
@@ -197,10 +181,21 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-document.addEventListener('focusin', keepFocusInMobileMenu);
+// Focus mode + traps
+document.addEventListener('mousedown', () => setKeyboardMode(false));
+document.addEventListener('touchstart', () => setKeyboardMode(false));
 
+// Keep focus inside the mobile menu when open
+document.addEventListener('focusin', (e) => {
+    if (!isMobile() || !navMenu.classList.contains('active')) return;
+    if (e.target === hamburger) return;
+    if (!navMenu.contains(e.target)) focusFirstMobileItem();
+});
+
+// Initialization + resize
 window.addEventListener('resize', () => {
     setMobileMenuFocusability(navMenu.classList.contains('active'));
 });
 
+// Initialize focusability on load
 setMobileMenuFocusability(navMenu.classList.contains('active'));
