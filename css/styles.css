@@ -1,3 +1,9 @@
+/*
+ * File: css/styles.css
+ * Project: Sticky Navbar
+ * Description: Styles for the sticky, responsive navigation header.
+ */
+
 /* Tokens */
 :root {
     --color-primary: #2271b1;
@@ -119,6 +125,7 @@ body {
 }
 
 @media(min-width:769px) {
+
     .nav-container,
     .nav-menu,
     .nav-list {
@@ -177,6 +184,7 @@ body {
 
 /* Desktop adjustments for links */
 @media(min-width:769px) {
+
     .nav-link,
     .action-area {
         justify-content: center;
@@ -329,24 +337,44 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.bar:nth-child(1) { margin-top: -8px; }
-.bar:nth-child(2) { margin-top: 0; }
-.bar:nth-child(3) { margin-top: 8px; }
+.bar:nth-child(1) {
+    margin-top: -8px;
+}
+
+.bar:nth-child(2) {
+    margin-top: 0;
+}
+
+.bar:nth-child(3) {
+    margin-top: 8px;
+}
 
 .hamburger.active .bar:nth-child(1) {
     margin-top: 0;
     transform: translate(-50%, -50%) rotate(45deg);
 }
-.hamburger.active .bar:nth-child(2) { opacity: 0; }
+
+.hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
 .hamburger.active .bar:nth-child(3) {
     margin-top: 0;
     transform: translate(-50%, -50%) rotate(-45deg);
 }
-.hamburger.active .bar { width: 24px; }
-.hamburger:hover .bar { background: var(--color-primary); }
+
+.hamburger.active .bar {
+    width: 24px;
+}
+
+.hamburger:hover .bar {
+    background: var(--color-primary);
+}
 
 @media(min-width:769px) {
-    .hamburger { display: none; }
+    .hamburger {
+        display: none;
+    }
 }
 
 .action-area svg {
@@ -415,6 +443,7 @@ body {
 }
 
 @media(min-width:769px) {
+
     .nav-item,
     .search-wrapper {
         width: auto;
@@ -440,6 +469,7 @@ body {
 }
 
 @media(min-width:769px) {
+
     .nav-link,
     .search-input {
         width: auto;
