@@ -39,13 +39,18 @@ tt-sticky-navbar/
 2. Open `index.html` in your browser.
 3. Modify `css/styles.css` or `js/script.js` to customize the navbar.
 
-## Demo (GitHub Pages)
+## Demo + Docs (GitHub Pages)
 
-This repo includes a demo page in `docs/index.html`. To publish it:
+- **Demo page:** `index.html` (repo root)
+- **Docs page:** `docs/index.html`
+
+To publish both:
 
 1. Go to **Settings → Pages** in GitHub.
-2. Set **Source** to the `main` branch and **/docs** folder.
+2. Set **Source** to the `main` branch and **/root** folder.
 3. Save, then use the URL GitHub provides.
+
+The docs page will be available at `/docs/` and links back to the demo.
 
 ## Browser Support
 
