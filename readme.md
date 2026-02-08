@@ -1,6 +1,6 @@
-# sticky-navbar
+# TT Sticky Navbar
 
-Sticky-navbar is a small front-end demo project showcasing a sticky, responsive navbar with dropdown menus and a mobile hamburger toggle.
+TT Sticky Navbar is a small front-end demo project showcasing a sticky, responsive navbar with dropdown menus and a mobile hamburger toggle.
 
 ## About
 
@@ -9,7 +9,7 @@ This project demonstrates a precision grid-based sticky navigation bar that main
 ## Project Structure
 
 ```
-sticky-navbar/
+tt-sticky-navbar/
 ├── index.html
 ├── css/
 │   └── styles.css
@@ -38,6 +38,14 @@ sticky-navbar/
 1. Clone or download the repository.
 2. Open `index.html` in your browser.
 3. Modify `css/styles.css` or `js/script.js` to customize the navbar.
+
+## Demo (GitHub Pages)
+
+This repo includes a demo page in `docs/index.html`. To publish it:
+
+1. Go to **Settings → Pages** in GitHub.
+2. Set **Source** to the `main` branch and **/docs** folder.
+3. Save, then use the URL GitHub provides.
 
 ## Browser Support
 

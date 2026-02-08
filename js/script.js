@@ -1,7 +1,10 @@
 /**
+ * Project: TT Sticky Navbar
  * File: js/script.js
- * Project: Sticky Navbar
  * Description: Behavior for menu, submenu, search, and accessibility.
+ * Author: Troy Templeman
+ * Date: February 8, 2026
+ * License: MIT (https://opensource.org/licenses/MIT)
  */
 
 // DOM references
@@ -11,11 +14,16 @@ const searchToggle = document.getElementById('search-toggle');
 const searchInput = document.getElementById('search-input');
 const toggles = document.querySelectorAll('.arrow-toggle');
 const focusableSelector = 'a, button, input, select, textarea, [tabindex]';
+const isMenuOpen = () => navMenu.classList.contains('active');
 
 // Shared helpers
 const isMobile = () => window.innerWidth <= 768;
 const setKeyboardMode = (isKeyboard) => document.body.classList.toggle('using-keyboard', isKeyboard);
 const setAriaExpanded = (el, expanded) => el.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+const closeSearch = () => {
+    searchInput.classList.remove('active');
+    setAriaExpanded(searchToggle, false);
+};
 
 // Mobile menu focus management
 const setMobileMenuFocusability = (isOpen) => {
@@ -52,10 +60,8 @@ const setMobileMenuFocusability = (isOpen) => {
 };
 
 // Get focusable items in the mobile menu
-const getMobileMenuFocusables = () => {
-    return Array.from(navMenu.querySelectorAll(focusableSelector))
-        .filter(el => !el.hasAttribute('disabled') && el.getAttribute('tabindex') !== '-1');
-};
+const getMobileMenuFocusables = () => Array.from(navMenu.querySelectorAll(focusableSelector))
+    .filter(el => !el.hasAttribute('disabled') && el.getAttribute('tabindex') !== '-1');
 
 // Focus the first available item when opening the mobile menu
 const focusFirstMobileItem = () => {
@@ -71,6 +77,8 @@ const setMobileMenuState = (open) => {
     setMobileMenuFocusability(open);
     if (open && isMobile()) requestAnimationFrame(focusFirstMobileItem);
 };
+
+const toggleMenu = () => setMobileMenuState(!isMenuOpen());
 
 // Submenu controls
 const closeAllSubmenus = () => {
@@ -113,24 +121,19 @@ searchToggle.addEventListener('click', (e) => {
 });
 
 // Mobile menu controls
-hamburger.addEventListener('click', () => {
-    setMobileMenuState(!navMenu.classList.contains('active'));
-});
+hamburger.addEventListener('click', toggleMenu);
 
 hamburger.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        setMobileMenuState(!navMenu.classList.contains('active'));
+        toggleMenu();
     }
 });
 
 // Global click/key handling
 document.addEventListener('click', (e) => {
     if (!e.target.closest('.nav-item')) closeAllSubmenus();
-    if (!isMobile() && !document.getElementById('search-wrapper').contains(e.target)) {
-        searchInput.classList.remove('active');
-        setAriaExpanded(searchToggle, false);
-    }
+    if (!isMobile() && !document.getElementById('search-wrapper').contains(e.target)) closeSearch();
 });
 
 // Keyboard handling (focus mode, escape, focus trap)
@@ -139,15 +142,14 @@ document.addEventListener('keydown', (e) => {
 
     if (e.key === 'Escape') {
         closeAllSubmenus();
-        if (navMenu.classList.contains('active')) {
+        if (isMenuOpen()) {
             setMobileMenuState(false);
             hamburger.focus();
         }
-        searchInput.classList.remove('active');
-        setAriaExpanded(searchToggle, false);
+        closeSearch();
     }
 
-    if (e.key !== 'Tab' || !navMenu.classList.contains('active') || !isMobile()) return;
+    if (e.key !== 'Tab' || !isMenuOpen() || !isMobile()) return;
 
     const items = getMobileMenuFocusables();
     if (!items.length) return;
@@ -187,15 +189,15 @@ document.addEventListener('touchstart', () => setKeyboardMode(false));
 
 // Keep focus inside the mobile menu when open
 document.addEventListener('focusin', (e) => {
-    if (!isMobile() || !navMenu.classList.contains('active')) return;
+    if (!isMobile() || !isMenuOpen()) return;
     if (e.target === hamburger) return;
     if (!navMenu.contains(e.target)) focusFirstMobileItem();
 });
 
 // Initialization + resize
 window.addEventListener('resize', () => {
-    setMobileMenuFocusability(navMenu.classList.contains('active'));
+    setMobileMenuFocusability(isMenuOpen());
 });
 
 // Initialize focusability on load
-setMobileMenuFocusability(navMenu.classList.contains('active'));
+setMobileMenuFocusability(isMenuOpen());
