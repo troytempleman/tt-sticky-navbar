@@ -176,7 +176,9 @@ body {
 
 .nav-link:hover,
 .action-area:hover,
-.dropdown-menu li a:hover {
+.dropdown-menu li a:hover,
+.brand:hover,
+.brand:focus-visible {
     color: var(--color-primary);
 }
 
